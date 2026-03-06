@@ -1,4 +1,5 @@
-public class Test {
+package src.Phase1_Basics;
+public class VariablesAndTypes {
     public static void main(String[] args) {
 
         int age = 25;
