@@ -152,6 +152,47 @@ public class Solution_02 {
         }
     }
 
+    // 9. Armstrong Numbers (Finding all in a range)
+    public static String armstrongNumbers(int start, int end) {
+
+        // Validate range
+        if (start < 0 || end < 0)   return "Error: Range values must be non-negative";
+        if (start > end)             return "Error: Start must be less than or equal to end";
+
+        StringBuilder result = new StringBuilder();
+
+        for (int n = start; n <= end; n++) {
+
+            // Step 1: Count digits → becomes the power
+            int digits = 0;
+            int temp   = n;
+            while (temp > 0) {
+                digits++;
+                temp /= 10;
+            }
+            if (n == 0) digits = 1; // edge case: 0 has 1 digit
+
+            // Step 2: Extract each digit, raise to power, sum
+            int sum = 0;
+            temp = n;
+            while (temp > 0) {
+                int digit = temp % 10;       // grab last digit
+                sum      += (int) Math.pow(digit, digits); // raise to power
+                temp     /= 10;              // chop last digit
+            }
+
+            // Step 3: Compare sum with original
+            if (sum == n) {
+                result.append(n).append(" ");
+            }
+        }
+
+        String found = result.toString().trim();
+        if (found.isEmpty()) return "No Armstrong numbers found between " + start + " and " + end;
+
+        return "Armstrong Numbers (" + start + " to " + end + "): " + found;
+    }
+
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
@@ -220,9 +261,16 @@ public class Solution_02 {
 
 
 //        8. Palindrome
-        System.out.println("Enter a string: ");
-        String text = input.nextLine();
-        System.out.println("Answer: " + isPalindrome((text)));
+//        System.out.println("Enter a string: ");
+//        String text = input.nextLine();
+//        System.out.println("Answer: " + isPalindrome((text)));
+
+        // 9. Armstrong Numbers
+        System.out.print("Enter start of range: ");
+        int start = input.nextInt();
+        System.out.print("Enter end of range: ");
+        int end = input.nextInt();
+        System.out.println("Answer: " + armstrongNumbers(start, end));
 
 
         input.close();

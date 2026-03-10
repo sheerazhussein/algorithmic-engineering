@@ -1,17 +1,21 @@
+# Solution_02 — Complete Deep Notes
+
 ## Table of Contents
 
 1. [Design Contract — Shared Across All Methods](#1-design-contract)
 2. [Problem 5 — Largest of Two Floats](#2-problem-5--largest-of-two-floats)
 3. [Problem 6 — Multi-Currency Converter](#3-problem-6--multi-currency-converter)
 4. [Problem 7 — Fibonacci Series](#4-problem-7--fibonacci-series)
-5. [Cross-Cutting Concepts](#5-cross-cutting-concepts)
-6. [Quick-Reference Cheatsheet](#6-quick-reference-cheatsheet)
+5. [Problem 8 — Palindrome Checker](#5-problem-8--palindrome-checker)
+6. [Problem 9 — Armstrong Numbers](#6-problem-9--armstrong-numbers)
+7. [Cross-Cutting Concepts](#7-cross-cutting-concepts)
+8. [Quick-Reference Cheatsheet](#8-quick-reference-cheatsheet)
 
 ---
 
 ## 1. Design Contract
 
-Every method in Challenge_02 follows the same four-rule contract. Understand this once — it applies everywhere.
+Every method in Solution_02 follows the same four-rule contract. Understand this once — it applies everywhere.
 
 | Rule | What It Means |
 |------|---------------|
@@ -37,8 +41,8 @@ This creates two failure modes that raw operators cannot handle:
 **Failure 1 — NaN breaks all comparisons**
 
 ```java
-Float.NaN > 5.0f      // → false  (expected: error or true)
-Float.NaN < 5.0f      // → false  (expected: error or false)
+Float.NaN > 5.0f       // → false  (expected: error or true)
+Float.NaN < 5.0f       // → false  (expected: error or false)
 Float.NaN == Float.NaN // → false  (NaN is not equal to itself)
 ```
 
@@ -170,8 +174,8 @@ Every currency only needs one rate: its rate against USD. Adding a new currency 
 public static String multiCurrencyConverter(double amount, String fromCurrency, String toCurrency) {
 
     // --- Guard Clauses ---
-    if (amount < 0)                                    return "Error: Amount cannot be negative";
-    if (fromCurrency == null || toCurrency == null)    return "Error: Invalid currencies";
+    if (amount < 0)                                 return "Error: Amount cannot be negative";
+    if (fromCurrency == null || toCurrency == null) return "Error: Invalid currencies";
 
     // --- Normalize ---
     fromCurrency = fromCurrency.toUpperCase();
@@ -232,11 +236,11 @@ fromCurrency = fromCurrency.toUpperCase();
 double usdAmount;
 ```
 
-This variable is the bridge. It has no meaning outside the two-step conversion process. Its name communicates its exact role: it holds a USD value in transit. Naming it `x` or `temp` would force the next reader to figure out its purpose from context.
+This variable is the bridge. Its name communicates its exact role: it holds a USD value in transit between the two conversion steps. Naming it `x` or `temp` would force the next reader to figure out its purpose from context.
 
 **Switch with `break` and `default`**
 
-Without `break`, Java falls through to the next case. In most switch blocks this is a bug. The `break` exits the switch immediately after the matching case executes.
+Without `break`, Java falls through to the next case. The `break` exits the switch immediately after the matching case executes.
 
 The `default` case handles all inputs that matched nothing. Including the actual invalid value in the error message (`"Unsupported source currency: " + fromCurrency`) gives specific, actionable feedback instead of a generic error.
 
@@ -255,10 +259,10 @@ Arguments are matched left-to-right: `amount`, `fromCurrency`, `convertedAmount`
 
 ```
 Step 1: fromCurrency = "USD"
-        usdAmount = 100 * 1 = 100.0
+        usdAmount = 100 × 1 = 100.0
 
 Step 2: toCurrency = "PKR"
-        convertedAmount = 100.0 * 278 = 27800.0
+        convertedAmount = 100.0 × 278 = 27800.0
 
 Output: "100.00 USD = 27800.00 PKR"
 ```
@@ -276,19 +280,6 @@ case "GBP": convertedAmount = usdAmount * 0.79; break;  // 1 USD = 0.79 GBP
 ```
 
 Two lines. Zero other changes. This is the defining characteristic of a scalable design.
-
----
-
-### Note on the Sample Output Inconsistency
-
-The provided sample shows `50 EUR = 3652.00 INR`. Tracing the actual code:
-
-```
-50 EUR × 1.08 = 54.00 USD
-54.00 USD × 83 = 4482.00 INR
-```
-
-The code produces `4482.00 INR`, not `3652.00`. The sample output was generated with different internal rates than what is written in the code. The code is internally consistent. When a sample output and the code logic conflict, trace the code. The code is the source of truth.
 
 ---
 
@@ -324,7 +315,7 @@ public static String fibonacciSeries(int n) {
     series.append(a).append(" ");          // Append first term before loop
 
     for (int i = 1; i < n; i++) {
-        series.append(b).append(" ");      // Step 1: print current b
+        series.append(b).append(" ");      // Step 1: append current b
         int next = a + b;                  // Step 2: compute next term
         a = b;                             // Step 3: slide window forward
         b = next;                          // Step 4: slide window forward
@@ -356,16 +347,16 @@ if (n <= 0) return "Error: Number of terms must be positive";
 if (n == 1) return "0";
 ```
 
-The loop appends `b` on every iteration and starts at `i=1`, running `n-1` times. For `n=1`, the loop runs zero times. Only the pre-loop append fires, producing `"0 "` with a trailing space. While `.trim()` would clean this, an explicit guard makes the intent visible and removes any reliance on a downstream side-effect to fix correctness.
+The loop appends `b` on every iteration and starts at `i=1`, running `n-1` times. For `n=1`, the loop runs zero times and only the pre-loop append fires, producing `"0 "` with a trailing space. An explicit guard makes the intent visible and removes reliance on a downstream side-effect to fix correctness.
 
 **`StringBuilder` instead of `String`**
 
-`String` is immutable. Every `+=` in a loop creates a new object and discards the old one. For `n=100`, that is 100 object allocations and 100 garbage collections, all wasted.
+`String` is immutable. Every `+=` in a loop creates a new object and discards the old one. For `n=100`, that is 100 object allocations — all wasted.
 
 `StringBuilder` is mutable. `.append()` modifies the same object in memory. One allocation, used throughout.
 
 ```
-String      →  printed page. Cannot be written on.
+String        →  printed page. Cannot be written on.
 StringBuilder →  whiteboard. Keep adding until done, then photograph it with .toString().
 ```
 
@@ -375,7 +366,7 @@ StringBuilder →  whiteboard. Keep adding until done, then photograph it with .
 int a = 0, b = 1;
 ```
 
-These represent a sliding window over the sequence. At any moment, `a` is the last printed term and `b` is the next term to print. Only these two values and one temporary variable are needed to generate an infinite sequence. No array, no stored history.
+These represent a **sliding window** over the sequence. At any moment, `a` is the last printed term and `b` is the next term to print. Only these two values and one temporary variable are needed to generate an infinite sequence. No array, no stored history.
 
 **Pre-loop append**
 
@@ -383,9 +374,7 @@ These represent a sliding window over the sequence. At any moment, `a` is the la
 series.append(a).append(" ");
 ```
 
-The first term (0, the value of `a`) is appended before the loop. The loop's job is to append `b`. If the first term were appended inside the loop, a conditional would be needed to avoid duplicating it. Separating initialization from iteration avoids that complexity.
-
-`.append(a).append(" ")` is method chaining. `append()` returns the same `StringBuilder` instance, so the second call runs on the same object. Equivalent to two separate lines.
+The first term (0) is appended before the loop. The loop's job is to append `b`. If the first term were appended inside the loop, a conditional would be needed to avoid duplicating it. Separating initialization from iteration avoids that complexity.
 
 **The Loop — Order Is Not Optional**
 
@@ -398,12 +387,12 @@ for (int i = 1; i < n; i++) {
 }
 ```
 
-Steps 3 and 4 overwrite `a` and `b`. Step 2 must happen before either of them, because the computation `a + b` needs the original values of both variables. The `next` variable exists for exactly this reason: to preserve the sum before the variables it depends on are changed.
+Steps 3 and 4 overwrite `a` and `b`. Step 2 must happen before either of them, because `a + b` needs the original values of both variables. The `next` variable exists to preserve the sum before the variables it depends on are changed.
 
-If steps were reordered:
+If reordered incorrectly:
 
 ```java
-a = b;           // a is now overwritten
+a = b;            // a is now overwritten
 int next = a + b; // BUG: uses new a, not original a
 ```
 
@@ -414,21 +403,13 @@ The result would be a wrong sequence. The four-step order is a logical constrain
 ```
 Before loop:  series = "0 ",  a = 0,  b = 1
 
-i=1:  append 1  →  series = "0 1 "    next=0+1=1   a=1  b=1
-i=2:  append 1  →  series = "0 1 1 "  next=1+1=2   a=1  b=2
-i=3:  append 2  →  series = "0 1 1 2 " next=1+2=3  a=2  b=3
-i=4:  append 3  →  series = "0 1 1 2 3 " next=2+3=5 a=3 b=5
+i=1:  append 1  →  "0 1 "      next=0+1=1   a=1  b=1
+i=2:  append 1  →  "0 1 1 "    next=1+1=2   a=1  b=2
+i=3:  append 2  →  "0 1 1 2 "  next=1+2=3   a=2  b=3
+i=4:  append 3  →  "0 1 1 2 3 " next=2+3=5  a=3  b=5
 
 Output: "Fibonacci (5 terms): 0 1 1 2 3"
 ```
-
-**`.trim()` — Clean the Trailing Space**
-
-Every term is appended with a trailing space. After the last term, there is one unwanted space at the end. `.trim()` removes all leading and trailing whitespace in one call. The alternative — a conditional inside the loop to skip the space on the last iteration — would complicate every iteration for the sake of one.
-
-**`.toString()` — Convert StringBuilder to String**
-
-`StringBuilder` is not a `String`. The `+` operator in the return statement works on `String`. `.toString()` returns the accumulated character sequence as a `String` object, at which point `.trim()` and string concatenation work normally.
 
 ---
 
@@ -440,40 +421,423 @@ Every term is appended with a trailing space. After the last term, there is one 
 | Working space | O(1) | Only 3 integer variables regardless of n |
 | Output space | O(n) | StringBuilder grows linearly with n |
 
-The working space is O(1) because the algorithm never stores the sequence in an array. It generates each term, appends it, and reuses the same three variables for the next term.
-
 ---
 
 ### Why Not Recursion?
 
-The naive recursive definition mirrors the mathematical definition:
-
 ```java
 int fib(int n) {
     if (n <= 1) return n;
-    return fib(n - 1) + fib(n - 2);
+    return fib(n - 1) + fib(n - 2);  // recomputes same values exponentially
 }
 ```
 
-This is clean to read but catastrophically slow. Computing `fib(8)` requires computing `fib(7)` and `fib(6)`. Computing `fib(7)` requires computing `fib(6)` again. Each level of the tree duplicates work exponentially.
-
 ```
-Time complexity of naive recursive Fibonacci: O(2^n)
-Time complexity of this iterative solution:   O(n)
+Time: naive recursive = O(2ⁿ)
+Time: this solution   = O(n)
 
-For n=40:  2^40  ≈ 1,099,511,627,776 operations
-           n=40  =                  40 operations
+For n=40:  2⁴⁰ ≈ 1,099,511,627,776 operations
+           n=40 =                 40 operations
 ```
 
 For generating a series, iteration is always the correct choice over naive recursion.
 
 ---
 
-## 5. Cross-Cutting Concepts
+## 5. Problem 8 — Palindrome Checker
+
+### What Is a Palindrome?
+
+A palindrome is a string that reads the same forward and backward.
+
+```
+"radar"  →  forward: r-a-d-a-r  |  backward: r-a-d-a-r  →  same ✅
+"hello"  →  forward: h-e-l-l-o  |  backward: o-l-l-e-h  →  different ❌
+"A"      →  single character    →  trivially same ✅
+```
+
+The simplest mechanical test: reverse the string, then compare. If the reversed version is identical to the original, it is a palindrome.
+
+---
+
+### The Solution
+
+```java
+public static String isPalindrome(String str) {
+
+    // --- Guard Clause ---
+    if (str == null || str.isEmpty()) {
+        return "Error: Empty string";
+    }
+
+    // --- Step 1: Build reversed string ---
+    String reversed = "";
+    for (int i = str.length() - 1; i >= 0; i--) {
+        reversed = reversed + str.charAt(i);
+    }
+
+    // --- Step 2: Compare ---
+    if (str.equals(reversed)) {
+        return str + " is Palindrome";
+    } else {
+        return str + " is Not Palindrome";
+    }
+}
+```
+
+---
+
+### Line-by-Line Breakdown
+
+**Guard Clause — null before isEmpty**
+
+```java
+if (str == null || str.isEmpty()) {
+    return "Error: Empty string";
+}
+```
+
+Two separate failure conditions caught in one guard. `null` means no object exists at all. Calling `.isEmpty()` on `null` throws `NullPointerException`. The null check must come first because Java evaluates `||` left to right and stops as soon as one side is `true` — if `str` is null, the right side is never evaluated.
+
+```java
+// SAFE — null check first
+if (str == null || str.isEmpty())
+
+// CRASH if str is null
+if (str.isEmpty() || str == null)
+```
+
+**`str.length() - 1` — zero-based indexing**
+
+Strings are zero-indexed. A string of length 5 has indices 0–4. The last character is at index `length - 1`. Starting at `str.length()` would be one position past the end — a `StringIndexOutOfBoundsException`.
+
+**`i >= 0` — the loop boundary**
+
+Index 0 is the first character. When `i` reaches -1, the condition is false and the loop stops. Every character is visited exactly once.
+
+**`str.charAt(i)` — character access**
+
+Returns the single character at position `i`. This is the foundation of all character-by-character string processing in Java.
+
+**`.equals()` vs `==` — the critical distinction**
+
+```java
+if (str.equals(reversed))
+```
+
+`==` on objects compares references — are these two variables pointing to the same object in memory? Two different `String` objects with identical content will have different addresses. `==` returns `false` even when content matches.
+
+`.equals()` compares content — do both strings contain the same character sequence? This is always what you want for string comparison.
+
+```java
+String a = "radar";
+String b = "radar";
+a == b       // unreliable — may be true or false depending on JVM internals
+a.equals(b)  // always true — content comparison
+```
+
+**Return format includes original string**
+
+```java
+return str + " is Palindrome";
+return str + " is Not Palindrome";
+```
+
+Including the original string in the message gives context. `"radar is Palindrome"` is more informative than just `"is Palindrome"`.
+
+---
+
+### Case Sensitivity
+
+This implementation is case-sensitive. `'R'` and `'r'` are different characters (Unicode code points 82 and 114).
+
+```
+"RaDaR"  →  reversed = "RaDaR"  →  equal ✅  (symmetric case)
+"Radar"  →  reversed = "radaR"  →  not equal ❌
+```
+
+To make it case-insensitive, normalize first:
+
+```java
+str = str.toLowerCase();
+```
+
+That is a deliberate design change, not a bug fix.
+
+---
+
+### Known Limitation: String Concatenation in a Loop
+
+```java
+reversed = reversed + str.charAt(i);
+```
+
+`String` is immutable. This creates a brand new `String` object on every iteration, copying all previous content in. For a string of length `n`, this creates `n` intermediate objects.
+
+The production fix:
+
+```java
+String reversed = new StringBuilder(str).reverse().toString();
+```
+
+For this exercise, the explicit loop is used because it makes the algorithm visible and traceable. `StringBuilder.reverse()` hides the mechanism. Learning comes from seeing the steps.
+
+---
+
+### Tracing the Loop: "radar"
+
+```
+Initial:  reversed = ""
+
+i=4:  charAt(4)='r'  →  reversed = "r"
+i=3:  charAt(3)='a'  →  reversed = "ra"
+i=2:  charAt(2)='d'  →  reversed = "rad"
+i=1:  charAt(1)='a'  →  reversed = "rada"
+i=0:  charAt(0)='r'  →  reversed = "radar"
+
+"radar".equals("radar") → true
+Output: "radar is Palindrome"
+```
+
+---
+
+### Complexity Analysis
+
+| Dimension | Value | Reason |
+|-----------|-------|--------|
+| Time | O(n) | One loop pass of n iterations + one `.equals()` scan |
+| Space | O(n) | `reversed` string grows to the same length as input |
+
+---
+
+### Edge Case Coverage
+
+| Input | Output | Reason |
+|-------|--------|--------|
+| `"radar"` | `"radar is Palindrome"` | Reversed equals original |
+| `"hello"` | `"hello is Not Palindrome"` | Reversed differs |
+| `"A"` | `"A is Palindrome"` | Single character is trivially a palindrome |
+| `"aa"` | `"aa is Palindrome"` | Two identical characters |
+| `"ab"` | `"ab is Not Palindrome"` | Two different characters |
+| `""` | `"Error: Empty string"` | Guard clause catches empty |
+| `null` | `"Error: Empty string"` | Guard clause catches null first |
+| `"RaDaR"` | `"RaDaR is Palindrome"` | Symmetric case matches |
+| `"Radar"` | `"Radar is Not Palindrome"` | `'R'` ≠ `'r'` |
+
+---
+
+## 6. Problem 9 — Armstrong Numbers
+
+### What Is an Armstrong Number?
+
+An Armstrong number (also called a Narcissistic number) equals the sum of its own digits, each raised to the power of the total digit count.
+
+```
+Formula:  n = d₁ᵏ + d₂ᵏ + ... + dₖᵏ
+
+Where:  n = the original number
+        d = each digit
+        k = total number of digits (the power)
+```
+
+**Example: 153**
+
+```
+Digits = 3  →  power = 3
+
+1³ + 5³ + 3³
+= 1 + 125 + 27
+= 153  ✅
+```
+
+---
+
+### The Solution
+
+```java
+public static String armstrongNumbers(int start, int end) {
+
+    // --- Guard Clauses ---
+    if (start < 0 || end < 0) return "Error: Range values must be non-negative";
+    if (start > end)           return "Error: Start must be less than or equal to end";
+
+    StringBuilder result = new StringBuilder();
+
+    for (int n = start; n <= end; n++) {
+
+        // Step 1: Count digits → this is the power
+        int digits = 0;
+        int temp   = n;
+        while (temp > 0) {
+            digits++;
+            temp /= 10;
+        }
+        if (n == 0) digits = 1;  // edge case: 0 has 1 digit
+
+        // Step 2: Extract each digit, raise to power, accumulate
+        int sum = 0;
+        temp = n;
+        while (temp > 0) {
+            int digit = temp % 10;
+            sum      += (int) Math.pow(digit, digits);
+            temp     /= 10;
+        }
+
+        // Step 3: Compare sum with original
+        if (sum == n) {
+            result.append(n).append(" ");
+        }
+    }
+
+    String found = result.toString().trim();
+    if (found.isEmpty()) return "No Armstrong numbers found between " + start + " and " + end;
+
+    return "Armstrong Numbers (" + start + " to " + end + "): " + found;
+}
+```
+
+---
+
+### Line-by-Line Breakdown
+
+**Guard Clauses**
+
+```java
+if (start < 0 || end < 0) return "Error: Range values must be non-negative";
+if (start > end)           return "Error: Start must be less than or equal to end";
+```
+
+Two separate invalid states. Negative ranges have no meaning for Armstrong numbers. An inverted range (start > end) means the loop would run zero iterations — catching it explicitly produces a clear error instead of silent empty output.
+
+**Why `temp` instead of `n` directly**
+
+```java
+int temp = n;
+while (temp > 0) { ... temp /= 10; }
+```
+
+The while loop destroys its variable through repeated division by 10. `n` must be preserved for the final comparison (`sum == n`). `temp` is a sacrificial copy — it is the variable we are allowed to destroy.
+
+**Step 1 — Counting digits (= the power)**
+
+```java
+int digits = 0;
+int temp = n;
+while (temp > 0) {
+    digits++;
+    temp /= 10;
+}
+if (n == 0) digits = 1;
+```
+
+Dividing by 10 in integer arithmetic removes the last digit. The count of how many times this can be done before reaching zero equals the number of digits. This count must be captured before Step 2, because it is the fixed power used for every digit in Step 2.
+
+The `n == 0` edge case: the while loop never runs for zero (condition `0 > 0` is immediately false). But 0 has one digit, and `0¹ = 0`, so 0 is technically an Armstrong number. The explicit fix sets `digits = 1` for this case.
+
+**The Two Core Operations**
+
+```java
+int digit = temp % 10;   // extract last digit
+temp /= 10;              // chop last digit
+```
+
+`% 10` returns the remainder after dividing by 10 — always the units digit. `/ 10` (integer division) shifts all digits one position right, discarding the units digit. Together, these two operations are the universal mechanism for digit-by-digit number decomposition.
+
+```
+temp = 153
+153 % 10 = 3   →  digit extracted
+153 / 10 = 15  →  15 remains
+
+temp = 15
+15 % 10 = 5    →  digit extracted
+15 / 10 = 1    →  1 remains
+
+temp = 1
+1 % 10 = 1     →  digit extracted
+1 / 10 = 0     →  loop stops
+```
+
+**`Math.pow(digit, digits)` cast to `int`**
+
+```java
+sum += (int) Math.pow(digit, digits);
+```
+
+`Math.pow()` returns a `double`. The result is cast to `int` because we are working with whole-number sums and comparing to an `int` at the end. The cast is safe here because Armstrong numbers only involve integer digits raised to small integer powers — no fractional component is lost.
+
+**`StringBuilder` for accumulation**
+
+The outer loop may add many Armstrong numbers to the result. Using `StringBuilder` avoids the object-creation overhead of repeated `String` concatenation in a loop (same reason as Fibonacci).
+
+**Empty result check**
+
+```java
+if (found.isEmpty()) return "No Armstrong numbers found between " + start + " and " + end;
+```
+
+A range with no Armstrong numbers (such as 100–152) should produce a meaningful message, not blank output. This check gives the caller actionable information.
+
+---
+
+### Dry Run: Is 1634 Armstrong?
+
+```
+n = 1634,  power = 4
+
+Iteration 1:  digit = 1634 % 10 = 4   sum = 0 + 4⁴ = 256       temp = 163
+Iteration 2:  digit = 163 % 10  = 3   sum = 256 + 3⁴ = 337     temp = 16
+Iteration 3:  digit = 16 % 10   = 6   sum = 337 + 6⁴ = 1633    temp = 1
+Iteration 4:  digit = 1 % 10    = 1   sum = 1633 + 1⁴ = 1634   temp = 0
+
+sum (1634) == n (1634)  ✅  Armstrong Number
+```
+
+---
+
+### All Armstrong Numbers: 1 to 9999
+
+| Number | Digits | Calculation |
+|--------|--------|-------------|
+| 1–9 | 1 | n¹ = n (all trivially Armstrong) |
+| 153 | 3 | 1³ + 5³ + 3³ = 1 + 125 + 27 = 153 |
+| 370 | 3 | 3³ + 7³ + 0³ = 27 + 343 + 0 = 370 |
+| 371 | 3 | 3³ + 7³ + 1³ = 27 + 343 + 1 = 371 |
+| 407 | 3 | 4³ + 0³ + 7³ = 64 + 0 + 343 = 407 |
+| 1634 | 4 | 1⁴ + 6⁴ + 3⁴ + 4⁴ = 1 + 1296 + 81 + 256 = 1634 |
+| 8208 | 4 | 8⁴ + 2⁴ + 0⁴ + 8⁴ = 4096 + 16 + 0 + 4096 = 8208 |
+| 9474 | 4 | 9⁴ + 4⁴ + 7⁴ + 4⁴ = 6561 + 256 + 2401 + 256 = 9474 |
+
+---
+
+### Complexity Analysis
+
+| Dimension | Value | Reason |
+|-----------|-------|--------|
+| Time | O(n × d) | For each number n in range, d = digit count (at most 10) |
+| Space | O(1) working | Fixed variables per iteration, no arrays |
+| Output space | O(k) | StringBuilder grows by count of Armstrong numbers found |
+
+In practice, `d` is bounded by a small constant (≤10 for 32-bit int), so the algorithm is effectively O(n) over the range.
+
+---
+
+### Edge Case Coverage
+
+| Input | Output |
+|-------|--------|
+| `0, 9` | All single digits (0–9 are all Armstrong) |
+| `100, 152` | "No Armstrong numbers found..." |
+| `153, 153` | `"Armstrong Numbers (153 to 153): 153"` |
+| `-1, 100` | Error: Range values must be non-negative |
+| `500, 100` | Error: Start must be less than or equal to end |
+
+---
+
+## 7. Cross-Cutting Concepts
 
 ### Guard Clause Pattern
 
-All three methods use guard clauses: validation at the top, early return on failure.
+All methods use guard clauses: validation at the top, early return on failure.
 
 ```java
 // Without guard clauses (deeply nested, hard to read)
@@ -503,23 +867,18 @@ Guard clauses eliminate nesting by handling failure cases first and returning im
 
 ### Unified Return Type
 
-Every method returns `String` for both success and failure. This eliminates the need for exception handling or null checks in the calling code.
+Every method returns `String` for both success and failure. This eliminates exception handling or null checks in the calling code.
 
 ```java
-// Caller is always simple:
+// Caller is always simple — no branching required:
 System.out.println("Answer: " + methodName(args));
-
-// No branching required:
-// String result = method(args);
-// if (result == null) { ... }
-// try { ... } catch (Exception e) { ... }
 ```
 
 ---
 
 ### `static` Method Design
 
-All methods are `static`. They take inputs, compute outputs, and touch no external state. This is the pure function pattern. Pure functions are predictable, testable, and reusable because their output depends only on their inputs.
+All methods are `static`. They take inputs, compute outputs, and touch no external state. Pure functions are predictable, testable, and reusable because their output depends only on their inputs.
 
 ---
 
@@ -527,14 +886,29 @@ All methods are `static`. They take inputs, compute outputs, and touch no extern
 
 | Approach | Code | Readability |
 |----------|------|-------------|
-| Concatenation | `"" + a + " " + b + " = " + c + " " + d` | Fragile, error-prone |
-| `String.format` | `String.format("%.2f %s = %.2f %s", a, b, c, d)` | Template is clear |
+| Concatenation | `"" + a + " " + b + " = " + c + " " + d` | Fragile, hard to scan |
+| `String.format` | `String.format("%.2f %s = %.2f %s", a, b, c, d)` | Template is self-documenting |
 
-`String.format` separates the structure (the template) from the data (the arguments). The template can be read and understood independently of the values being inserted.
+`String.format` separates the structure (template) from the data (arguments). The template can be read and understood independently of the values being inserted.
 
 ---
 
-## 6. Quick-Reference Cheatsheet
+### The `temp` Variable Pattern
+
+Across Armstrong, Fibonacci, and Palindrome: whenever an algorithm must consume or destroy a value through a loop, a copy (`temp`) is made so the original is preserved for later use (final comparison, output, etc.).
+
+```java
+int temp = n;    // copy to destroy
+while (temp > 0) {
+    // consume temp
+}
+// n is still intact for comparison
+if (sum == n) { ... }
+```
+
+---
+
+## 8. Quick-Reference Cheatsheet
 
 ### Float Comparison
 
@@ -546,32 +920,53 @@ if (a == b) ...
 // CORRECT
 if (Float.isNaN(a) || Float.isNaN(b)) return "NaN error";
 int cmp = Float.compare(a, b);
-// cmp > 0 → a is larger | cmp < 0 → b is larger | cmp == 0 → equal
+// cmp > 0 → a larger | cmp < 0 → b larger | cmp == 0 → equal
 ```
 
-### Currency Conversion
+### Currency Conversion Pattern
 
-```java
-// Pattern: source → USD (step 1) → target (step 2)
-// Rates are hardcoded. Comments explain each magic number.
-// default case returns specific error with unsupported currency name.
+```
+Source currency → USD (step 1) → Target currency (step 2)
+Each currency needs exactly one rate vs USD.
+default case in switch → specific error with unsupported currency name.
 ```
 
 ### Fibonacci Loop Order
 
 ```
-1. Append b
-2. next = a + b      ← MUST be before reassignment
-3. a = b
-4. b = next
+1. Append b              ← print current
+2. next = a + b          ← compute BEFORE overwriting
+3. a = b                 ← slide window
+4. b = next              ← slide window
+```
+
+### Palindrome Key Rules
+
+```
+1. null check BEFORE isEmpty()
+2. Last index = str.length() - 1  (not str.length())
+3. Always use .equals(), never == for String content
+4. Case-sensitive by default
+```
+
+### Armstrong Core Operations
+
+```
+digit = temp % 10      ← extract last digit
+temp  = temp / 10      ← remove last digit
+sum  += digit ^ power  ← accumulate
+
+Count digits FIRST (before extraction) → this is the power.
+Preserve original n with a temp copy.
+Handle n=0 separately (while loop never runs for 0).
 ```
 
 ### `StringBuilder` Rule
 
 ```
-Use String     → short, non-looped assembly
+Use String        → short, non-looped assembly
 Use StringBuilder → any loop that builds a string iteratively
-Call .toString().trim() to finalize
+Finalize with     → .toString().trim()
 ```
 
 ### Format Specifiers
@@ -585,3 +980,4 @@ Call .toString().trim() to finalize
 
 ---
 
+*Solution_02 Deep Notes — Problems 5 through 9*
