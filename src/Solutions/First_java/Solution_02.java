@@ -1,4 +1,4 @@
-package JF.src.solutions;
+package Solutions.First_java;
 
 import java.util.Scanner;
 
@@ -108,7 +108,7 @@ public class Solution_02 {
     }
 
 //    7. Fibonacci Series (First n terms)
-    public static String facbonacciSeries(int num){
+    public static String FacbonacciSeries(int num){
 
         if (num <= 0) return "Error: Number of terms must be positive";
         if (num == 1) return "0";
@@ -257,7 +257,7 @@ public class Solution_02 {
         // // 7. Fibonacci Test
 //        System.out.println("Enter a number of terms: ");
 //        int terms = input.nextInt();
-//        System.out.println("Answer: " + facbonacciSeries(terms));
+//        System.out.println("Answer: " + FacbonacciSeries(terms));
 
 
 //        8. Palindrome
