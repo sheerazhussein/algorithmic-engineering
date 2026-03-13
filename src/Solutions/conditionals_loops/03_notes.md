@@ -318,3 +318,80 @@ Top strip     = 2 × 0.5 = 1.0
 Corner square = 0.5 × 0.5 = 0.25
 Total         = 2 + 0.5 + 1.0 + 0.25 = 3.75 = 2.5 × 1.5  ✓
 The formula works for all positive real numbers.
+
+
+
+═══════════════════════════════════════════════════════════
+BASIC PROGRAM A04: AREA OF ISOSCELES TRIANGLE
+═══════════════════════════════════════════════════════════
+javapublic static double areaOfIsoscelesTriangle(double a, double b) {
+if (2 * a <= b) throw new IllegalArgumentException("Invalid triangle");
+double height = Math.sqrt((a * a) - ((b * b) / 4.0));
+return 0.5 * b * height;
+}
+What Is an Isosceles Triangle?
+An isosceles triangle has exactly TWO equal sides (legs of length a)
+and one base of length b. Its two base angles are equal.
+apex
+A
+╱ ╲
+a╱   ╲a   ← two equal sides
+╱     ╲
+B───────C
+b       ← base
+Deriving the Height Using Pythagorean Theorem
+Step 1: Drop a perpendicular from apex A to base BC.
+By symmetry, it hits the EXACT midpoint M of BC.
+A
+╱|╲
+a╱ |h╲a
+╱  |  ╲
+B───M───C
+b/2   b/2
+Step 2: Triangle ABM is a right triangle with:
+
+hypotenuse = a (the equal side)
+base leg   = b/2 (half the base)
+height leg = h (what we want)
+
+Step 3: Apply Pythagorean theorem:
+a² = h² + (b/2)²
+h² = a² - (b/2)²
+h² = a² - b²/4
+h  = √(a² - b²/4)
+Step 4: Area = ½ × base × height = ½ × b × √(a² - b²/4)
+The Triangle Inequality Check
+javaif (2 * a <= b) throw new IllegalArgumentException("Invalid triangle");
+For a triangle to exist, EACH side must be less than the sum of the
+other two sides (Triangle Inequality Theorem):
+Side 1 (a) + Side 2 (a) > Base (b)
+2a > b
+If 2a ≤ b, the two legs are too short to reach each other. You'd
+get a line segment, not a triangle. Geometrically:
+Imagine b very large:
+a╲                    ╱a
+╲                  ╱
+╲                ╱
+╲──────────────╱
+b (huge)
+
+The legs can't meet at top → no triangle possible
+If we didn't check this: a² - b²/4 would be NEGATIVE,
+and Math.sqrt of a negative number returns NaN (Not a Number).
+The guard clause prevents this nonsense.
+What Is Math.sqrt() Doing?
+Math.sqrt(x) finds y such that y² = x.
+Internally, Java uses the Newton-Raphson method (or CPU hardware instruction):
+Start with guess y₀
+Each iteration: yₙ₊₁ = (yₙ + x/yₙ) / 2
+This converges quadratically fast to √x
+For example, √25:
+y₀ = 5 (guess)
+y₁ = (5 + 25/5) / 2 = (5+5)/2 = 5  (converged immediately, perfect square!)
+For √20:
+y₀ = 4
+y₁ = (4 + 20/4) / 2 = (4+5)/2 = 4.5
+y₂ = (4.5 + 20/4.5) / 2 = (4.5 + 4.444) / 2 ≈ 4.472
+y₃ ≈ 4.4721  (converging to 4.47213...)
+Modern CPUs have a SQRTSS hardware instruction that does this in
+a few clock cycles.
