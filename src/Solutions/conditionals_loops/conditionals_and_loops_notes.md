@@ -571,3 +571,33 @@ return SQRT3_OVER_4 * side * side;
 }
 static final = computed once at class loading time, reused on every call.
 This is called a "compile-time constant pattern."
+
+
+═══════════════════════════════════════════════════════════
+BASIC PROGRAM A08: PERIMETER OF CIRCLE (Circumference)
+═══════════════════════════════════════════════════════════
+javapublic static double perimeterOfCircle(double radius) {
+return 2 * Math.PI * radius;
+}
+Why Circumference = 2πr?
+By DEFINITION: π = C / d = C / (2r)
+Therefore: C = π × 2r = 2πr
+This is circular (pun intended) — π was defined TO make this formula work.
+The deep question is: why does this constant π exist?
+The Deeper Why
+All circles are geometrically similar. Double the radius → double the
+circumference. The circumference is ALWAYS proportional to r:
+C = k × r for some constant k.
+What is k? k = 2π. Why? Because if you unroll the circle into a straight
+line and measure it, you always get 2π radii worth of length.
+Experimentally: roll a circle of radius r along a flat surface for one
+complete rotation. The distance traveled = C = 2πr. You can measure this
+with any circular object. The ratio C/(2r) is always ≈ 3.14159...
+Historical Note: Approximating π
+Babylonians (1900 BC): π ≈ 3.125 (used 25/8)
+Bible (1 Kings 7:23):  π ≈ 3 (very rough)
+Archimedes (250 BC):   3.1408 < π < 3.1429 (inscribed/circumscribed polygons)
+Zu Chongzhi (480 AD):  π ≈ 355/113 (accurate to 6 decimal places!)
+Modern (2024):          π known to 105 TRILLION decimal places
+Math.PI = 3.141592653589793 — best 64-bit double approximation of π.
+
