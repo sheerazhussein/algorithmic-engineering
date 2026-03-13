@@ -450,3 +450,61 @@ CRITICAL: Height ≠ Slant Side
 h = perpendicular distance between the two parallel sides
 = slant_side × sin(angle)
 If you use the slant side instead of h, you get a WRONG (too large) area.
+
+
+
+
+═══════════════════════════════════════════════════════════
+BASIC PROGRAM A06: AREA OF RHOMBUS
+═══════════════════════════════════════════════════════════
+javapublic static double areaOfRhombus(double d1, double d2) {
+return (d1 * d2) / 2.0;
+}
+What Is a Rhombus?
+A rhombus is a parallelogram with ALL FOUR sides equal (like a tilted square).
+Key property: Its two diagonals bisect each other at EXACTLY 90°.
+A
+╱|╲
+╱  |  ╲
+╱  d2/2  ╲
+D────────────B   ← diagonal d1
+╲  d2/2  ╱
+╲  |  ╱
+╲|╱
+C
+↑ diagonal d2
+
+Diagonals d1 and d2 cross at 90° at the center.
+Each diagonal bisects the other: each half = d1/2 and d2/2
+Proving Area = (d1 × d2) / 2
+Method 1: Four Right Triangles
+The diagonals divide the rhombus into 4 congruent right triangles:
+Each right triangle has legs: d1/2 and d2/2
+Area of each = (1/2) × (d1/2) × (d2/2) = d1×d2/8
+
+Total for 4 triangles = 4 × d1×d2/8 = d1×d2/2  ✓
+Method 2: The Bounding Rectangle
+The rhombus fits perfectly inside a rectangle of dimensions d1 × d2:
+┌────────────────┐
+│      A         │
+│    ╱   ╲       │
+│  ╱       ╲     │  d2
+│D           B   │
+│  ╲       ╱     │
+│    ╲   ╱       │
+│      C         │
+└────────────────┘
+d1
+The rhombus covers exactly HALF the rectangle (you can see the 4
+triangles in the corners outside the rhombus are equal to the 4
+triangles inside). So Area = (d1 × d2) / 2.
+The 2.0 Issue: Integer Division Pitfall
+javareturn (d1 * d2) / 2.0;   // CORRECT: 2.0 is a double literal
+return (d1 * d2) / 2;     // Also OK here because d1, d2 are doubles
+// double / int = double in Java
+But if d1 and d2 were ints:
+javaint d1 = 8, d2 = 6;
+int area = (d1 * d2) / 2;   // 48/2 = 24 ✓ (happens to work here)
+int area = (d1 * d2) / 3;   // 48/3 = 16 ✓
+int area = (d1 * d2) / 5;   // 48/5 = 9  ✗ (should be 9.6, truncated!)
+Always use 2.0 (not 2) when you want floating-point division result.
