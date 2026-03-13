@@ -395,3 +395,58 @@ y₂ = (4.5 + 20/4.5) / 2 = (4.5 + 4.444) / 2 ≈ 4.472
 y₃ ≈ 4.4721  (converging to 4.47213...)
 Modern CPUs have a SQRTSS hardware instruction that does this in
 a few clock cycles.
+
+
+═══════════════════════════════════════════════════════════
+BASIC PROGRAM A05: AREA OF PARALLELOGRAM
+═══════════════════════════════════════════════════════════
+javapublic static double areaOfParallelogram(double base, double height) {
+return base * height;
+}
+What Is a Parallelogram?
+A parallelogram has two pairs of parallel sides. Unlike a rectangle,
+the angles need not be 90°.
+╱─────────────╱
+╱               ╱  ← these two sides are parallel and equal
+╱─────────────╱
+←     base     →
+Proving Area = base × height (The Cut-and-Paste Proof)
+This is one of the most elegant proofs in geometry:
+Step 1: Original parallelogram (leaning to the right)
+╱──────────╱
+╱           ╱  h (perpendicular height)
+╱───────────╱
+←────────────→
+base b
+
+Step 2: Cut the left triangle off.
+┌──────────╱
+│          ╱
+│─────────╱    plus    ╱
+←triangle→
+
+Step 3: Move the triangle to the RIGHT side.
+┌──────────┐
+│          │  h
+│          │
+└──────────┘
+←────────────→
+b
+→ This is a RECTANGLE with the same base and height!
+
+Area of rectangle = b × h
+Area of parallelogram = Area of rectangle = b × h  ✓
+This works because "cutting and rearranging" preserves area.
+(Cavalieri's Principle: shapes with equal cross-sections at every height
+have equal area.)
+CRITICAL: Height ≠ Slant Side
+╱──────────╱
+╱ ↑         ╱  ← slant side (NOT the height)
+╱  │h        ╱
+╱   ↓        ╱
+╱────────────╱
+←   base    →
+
+h = perpendicular distance between the two parallel sides
+= slant_side × sin(angle)
+If you use the slant side instead of h, you get a WRONG (too large) area.
