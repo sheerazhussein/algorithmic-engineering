@@ -1,4 +1,4 @@
-package Solutions.conditionals_loops;
+package Solutions_Conditionals_loops;
 
 public class Solution_01 {
 
