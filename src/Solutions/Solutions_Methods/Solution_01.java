@@ -15,7 +15,7 @@ public class Solution_01 {
 
     public static void main(String[] args) {
         // Example usage:
-        System.out.println(STR."Max: \{findMax(5, 10, 3)}");
-        System.out.println(STR."Min: \{findMin(59-90, 109090-9, 30090)}");
+//        System.out.println(STR."Max: \{findMax(5, 10, 3)}");
+//        System.out.println(STR."Min: \{findMin(59-90, 109090-9, 30090)}");
     }
 }

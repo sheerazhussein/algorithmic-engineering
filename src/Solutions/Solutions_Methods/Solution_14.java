@@ -22,7 +22,7 @@ public class Solution_14 {
             long totalSum = sumOfNaturalNumbers(n);
 
             if (totalSum != -1) {
-                System.out.println(STR."The sum of the first \{n} natural numbers is: \{totalSum}");
+//                System.out.println(STR."The sum of the first \{n} natural numbers is: \{totalSum}");
             }
         } else {
             System.out.println("Invalid input. Please enter a positive integer.");
